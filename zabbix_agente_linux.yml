@@ -1,0 +1,21 @@
+---
+- hosts: docker
+  tasks:
+  - name: "Instalar Repositório EPEL"
+    yum: name=epel-release.noarch state=latest
+
+  - name: "Substituindo o arquivo de configuração do EPEL"
+    copy: src=/etc/ansible/conf/epel.repo dest=/etc/yum.repos.d/ owner=root mode=0644
+
+  - name: "Instalar Agente ZABBIX"
+    yum: name=zabbix22-agent.x86_64 state=latest
+ 
+  - name: copy zabbix configuration file
+    copy: src=/etc/ansible/conf/zabbix_install.sh dest=/etc/zabbix/zabbix_install.sh owner=root mode=777
+  
+  - script: /etc/zabbix/zabbix_install.sh
+
+  - name: "Iniciar Agente ZABBIX"
+    service:
+      name: zabbix-agent
+      state: restarted 
